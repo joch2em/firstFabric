@@ -4,7 +4,11 @@ import com.mojang.datafixers.types.templates.Tag;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.firstFabric.world.dimension.ModDimensions;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.Material;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.client.texture.TextureStitcher;
 import net.minecraft.client.util.math.Vector3d;
@@ -42,9 +46,15 @@ public class FirstFabric implements ModInitializer {
 	public static final TestItem FABRIC_ITEM =
 			new TestItem(new FabricItemSettings().group(ItemGroup.MISC).maxCount(16).group(FirstFabric.ITEM_GROUP));
 
+	public static final Block FABRIC_BLOCK = registerBlock(
+		"Teleporter",
+			new Teleporter(FabricBlockSettings.of(Material.STONE).strength(6f))
+	)
+
 
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("firstfabric");
+	public static final String MOD_ID = "firstFabric";
 
 	@Override
 	public void onInitialize() {
@@ -52,6 +62,8 @@ public class FirstFabric implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 		Registry.register(Registry.ITEM, new Identifier("firstfabric", "test_item"), FABRIC_ITEM);
+		ModDimensions.register();
+
 		LOGGER.info("The greatest mod ever has just loaded (firstFabric from joch2em:D)!");
 	}
 
@@ -76,6 +88,13 @@ public class FirstFabric implements ModInitializer {
 
 			stack.decrement(1);
 			return TypedActionResult.success(stack);
+		}
+	}
+
+	static class Teleporter extends Block{
+
+		public Teleporter(Settings settings) {
+			super(settings);
 		}
 	}
 }
