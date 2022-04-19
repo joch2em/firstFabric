@@ -46,10 +46,12 @@ public class FirstFabric implements ModInitializer {
 	public static final TestItem FABRIC_ITEM =
 			new TestItem(new FabricItemSettings().group(ItemGroup.MISC).maxCount(16).group(FirstFabric.ITEM_GROUP));
 
-	public static final Block FABRIC_BLOCK = registerBlock(
-		"Teleporter",
-			new Teleporter(FabricBlockSettings.of(Material.STONE).strength(6f))
-	)
+	//public static final Block FABRIC_BLOCK = registerBlock(
+	//	"Teleporter",
+	//		new Teleporter(FabricBlockSettings.of(Material.STONE).strength(6f)
+	//				.breakByTool(FabricToolTags.PICKAXES, 2).requiresTool()
+	//		)
+	//);
 
 
 
