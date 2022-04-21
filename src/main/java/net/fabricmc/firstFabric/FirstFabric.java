@@ -125,24 +125,17 @@ public class FirstFabric implements ModInitializer {
 		public Teleporter(Settings settings) {
 			super(settings);
 		}
-		
 
+		@Override
+		public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+			if (!world.isClient) {
+				MinecraftServer server = world.getServer();
+				ServerWorld backrooms = server.getWorld(ModDimensions.backrooms_KEY);
 
+				((ServerPlayerEntity)player).teleport(backrooms, 0, 8, 0, 0, 0);
+			}
 
-
-
-
-
-		//@Override
-		//public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		//	if (!world.isClient) {
-		//		MinecraftServer server = world.getServer();
-		//		ServerWorld backrooms = server.getWorld(ModDimensions.backrooms_KEY);
-//
-//				((ServerPlayerEntity)player).teleport(backrooms, 0, 8, 0, 0, 0);
-//			}
-//
-//			return ActionResult.SUCCESS;
-//		}
+			return ActionResult.SUCCESS;
+		}
 	}
 }
