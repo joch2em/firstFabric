@@ -126,16 +126,78 @@ public class FirstFabric implements ModInitializer {
 			super(settings);
 		}
 
+		//@Override
+		//public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+		//	if (!world.isClient) {
+		//		MinecraftServer server = world.getServer();
+		//		ServerWorld backrooms = server.getWorld(ModDimensions.backrooms_KEY);
+//
+//				((ServerPlayerEntity)player).teleport(backrooms, 0, 8, 0, 0, 0);
+//			}
+//
+//			return ActionResult.SUCCESS;
+//		}
+
+
+
 		@Override
 		public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 			if (!world.isClient) {
-				MinecraftServer server = world.getServer();
-				ServerWorld backrooms = server.getWorld(ModDimensions.backrooms_KEY);
+				if (!player.isSneaking()) {
+					MinecraftServer server = world.getServer();
+					if (server != null) {
+						if (player instanceof ServerPlayerEntity) {
+							ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
+							if (world.getRegistryKey() == ModDimensions.backrooms_KEY) {
+								ServerWorld overWorld = server.getWorld(World.OVERWORLD);
+								if (overWorld != null) {
+									BlockPos destPos = getDest(player.getBlockPos(), overWorld, false);
+									serverPlayer.teleport(overWorld, destPos.getX(), destPos.getY(), destPos.getZ(),
+											serverPlayer.bodyYaw, serverPlayer.prevPitch);
+								}
+							} else {
+								ServerWorld backrooms = server.getWorld(ModDimensions.backrooms_KEY);
+								if (backrooms != null) {
+									BlockPos destPos = getDest(serverPlayer.getBlockPos(), backrooms, true);
+									boolean doSetBlock = true;
+									for (BlockPos checkPos : BlockPos.iterate(destPos.down(10).west(10).south(10), destPos.up(10).east(10).north(10))) {
+										if (backrooms.getBlockState(checkPos).getBlock() == TELEPORTER) {
+											doSetBlock = false;
+											break;
+										}
+									}
+									if (doSetBlock) {
+										backrooms.setBlockState(destPos, TELEPORTER.getDefaultState());
+									}
+									serverPlayer.teleport(backrooms, destPos.getX(), destPos.getY(), destPos.getZ(),
+											serverPlayer.bodyYaw, serverPlayer.prevPitch);
+								}
+							}
+							return ActionResult.SUCCESS;
+						}
+					}
+				}
+			}
+			return super.onUse(state, world, pos, player, hand, hit);
+		}
+		public static BlockPos getDest(BlockPos pos, World destWorld, boolean isInDimension) {
+			double y = 61;
 
-				((ServerPlayerEntity)player).teleport(backrooms, 0, 8, 0, 0, 0);
+			if (!isInDimension) {
+				y = pos.getY();
 			}
 
-			return ActionResult.SUCCESS;
+			BlockPos destPos = new BlockPos(pos.getX(), y, pos.getZ());
+			int tries = 0;
+			while ((!destWorld.getBlockState(destPos).isAir() && !destWorld.getBlockState(destPos)
+					.canBucketPlace(Fluids.WATER)) &&
+					(!destWorld.getBlockState(destPos.up()).isAir() && !destWorld.getBlockState(destPos.up())
+							.canBucketPlace(Fluids.WATER)) && tries < 25) {
+				destPos = destPos.up(2);
+				tries++;
+			}
+
+			return destPos;
 		}
 	}
 }
