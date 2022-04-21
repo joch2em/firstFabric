@@ -11,7 +11,7 @@ import net.fabricmc.firstFabric.FirstFabric;
 public class ModDimensions {
     private static final RegistryKey<DimensionOptions> DIMENSION_KEY = RegistryKey.of(Registry.DIMENSION_KEY,
             new Identifier(FirstFabric.MOD_ID, "backrooms"));
-    public static RegistryKey<World> KJDIM_KEY = RegistryKey.of(Registry.WORLD_KEY, DIMENSION_KEY.getValue());
+    public static RegistryKey<World> backrooms_KEY = RegistryKey.of(Registry.WORLD_KEY, DIMENSION_KEY.getValue());
     private static final RegistryKey<DimensionType> DIMENSION_TYPE_KEY = RegistryKey.of(Registry.DIMENSION_TYPE_KEY,
             new Identifier(FirstFabric.MOD_ID, "backrooms_type"));
 
