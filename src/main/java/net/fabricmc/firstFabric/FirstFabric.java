@@ -1,51 +1,44 @@
 package net.fabricmc.firstFabric;
 
-import com.mojang.datafixers.types.templates.Tag;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.fabricmc.firstFabric.entity.hostilemob.Hound;
+import net.fabricmc.firstFabric.entity.hostilemob.HoundEntity;
+import net.fabricmc.firstFabric.entity.hostilemob.HoundEntityRenderer;
 import net.fabricmc.firstFabric.world.dimension.ModDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.render.DimensionEffects;
-import net.minecraft.client.texture.TextureStitcher;
-import net.minecraft.client.util.math.Vector3d;
-import net.minecraft.datafixer.fix.ItemNameFix;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
-import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.BlockCollisionSpliterator;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.minecraft.*;
 
 import java.util.List;
 
@@ -83,9 +76,9 @@ public class FirstFabric implements ModInitializer {
 
 	//HOSTILE ENTITIES
 
-	public static final EntityType<Hound> HOUND =
-			Registry.register(Registry.ENTITY_TYPE, new Identifier("firstfabric", "Hound"),
-			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, Hound::new).dimensions(EntityDimensions.fixed(2f, 1)).build()
+	public static final EntityType<HoundEntity> HOUND =
+			Registry.register(Registry.ENTITY_TYPE, new Identifier("firstfabric", "hound"),
+			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, HoundEntity::new).dimensions(EntityDimensions.fixed(2f, 1)).build()
 	);
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("firstfabric");
@@ -114,7 +107,7 @@ public class FirstFabric implements ModInitializer {
 
 
 		// HOSTILE ENTITIES
-		FabricDefaultAttributeRegistry.register(HOUND, Hound.createMobAttributes());
+		FabricDefaultAttributeRegistry.register(HOUND, HoundEntity.createMobAttributes());
 
 		ModDimensions.register();
 
@@ -178,20 +171,6 @@ public class FirstFabric implements ModInitializer {
 		public Teleporter(Settings settings) {
 			super(settings);
 		}
-
-		//@Override
-		//public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		//	if (!world.isClient) {
-		//		MinecraftServer server = world.getServer();
-		//		ServerWorld backrooms = server.getWorld(ModDimensions.backrooms_KEY);
-//
-//				((ServerPlayerEntity)player).teleport(backrooms, 0, 8, 0, 0, 0);
-//			}
-//
-//			return ActionResult.SUCCESS;
-//		}
-
-
 
 		@Override
 		public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
