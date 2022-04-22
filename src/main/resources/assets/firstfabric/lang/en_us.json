@@ -4,6 +4,9 @@
   "item.firstfabric.test_item": "Sans token",
 
   "block.firstfabric.backrooms_wall": "Backrooms wall",
+  "block.firstfabric.backrooms_light": "Backrooms light",
+  "block.firstfabric.backrooms_carpet": "Backrooms carpet",
+  "block.firstfabric.backrooms_ceiling": "Backrooms ceiling",
   "block.firstfabric.teleporter": "Glitch",
 
   "itemGroup.firstfabric.general": "Backrooms"

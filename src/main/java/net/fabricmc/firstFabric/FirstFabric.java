@@ -5,6 +5,9 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.fabricmc.firstFabric.entity.hostilemob.Hound;
 import net.fabricmc.firstFabric.world.dimension.ModDimensions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -15,6 +18,9 @@ import net.minecraft.client.render.DimensionEffects;
 import net.minecraft.client.texture.TextureStitcher;
 import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.datafixer.fix.ItemNameFix;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -48,19 +54,39 @@ public class FirstFabric implements ModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 
+	//ITEM GROUPS
+
 	public static final ItemGroup ITEM_GROUP = FabricItemGroupBuilder.build(
 			new Identifier("firstfabric", "general"),
 			() -> new ItemStack(Blocks.COBBLESTONE));
 
+	//ITEMS
+
 	public static final TestItem FABRIC_ITEM =
 			new TestItem(new FabricItemSettings().group(ItemGroup.MISC).maxCount(16).group(FirstFabric.ITEM_GROUP));
 
+	//BLOCKS
+
 	public static final Block BACKROOMS_WALL =
 			new Backrooms_wall(FabricBlockSettings.of(Material.STONE).strength(10000.0f));
+	public static final Block BACKROOMS_LIGHT =
+			new Backrooms_light(FabricBlockSettings.of(Material.REDSTONE_LAMP).strength(10000.0f).luminance(45));
+	public static final Block BACKROOMS_CARPET =
+			new Backrooms_carpet(FabricBlockSettings.of(Material.CARPET).strength(10000.0f));
+	public static final Block BACKROOMS_CEILING =
+			new Backrooms_ceiling(FabricBlockSettings.of(Material.STONE).strength(10000.0f));
+
+	//SPECIAL BLOCKS
 
 	public static final Block TELEPORTER =
 			new Teleporter(FabricBlockSettings.of(Material.STONE).strength(1f).luminance(10).noCollision());
 
+	//HOSTILE ENTITIES
+
+	public static final EntityType<Hound> HOUND =
+			Registry.register(Registry.ENTITY_TYPE, new Identifier("firstfabric", "Hound"),
+			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, Hound::new).dimensions(EntityDimensions.fixed(2f, 1)).build()
+	);
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("firstfabric");
 	public static final String MOD_ID = "firstfabric";
@@ -74,11 +100,21 @@ public class FirstFabric implements ModInitializer {
 		//	ITEMS
 		Registry.register(Registry.ITEM, new Identifier("firstfabric", "test_item"), FABRIC_ITEM);
 		Registry.register(Registry.ITEM, new Identifier("firstfabric", "backrooms_wall"), new BlockItem(BACKROOMS_WALL, new FabricItemSettings().group(FirstFabric.ITEM_GROUP)));
+		Registry.register(Registry.ITEM, new Identifier("firstfabric", "backrooms_carpet"), new BlockItem(BACKROOMS_CARPET, new FabricItemSettings().group(FirstFabric.ITEM_GROUP)));
+		Registry.register(Registry.ITEM, new Identifier("firstfabric", "backrooms_light"), new BlockItem(BACKROOMS_LIGHT, new FabricItemSettings().group(FirstFabric.ITEM_GROUP)));
+		Registry.register(Registry.ITEM, new Identifier("firstfabric", "backrooms_ceiling"), new BlockItem(BACKROOMS_CEILING, new FabricItemSettings().group(FirstFabric.ITEM_GROUP)));
 		Registry.register(Registry.ITEM, new Identifier("firstfabric", "teleporter"), new BlockItem(TELEPORTER, new FabricItemSettings().group(FirstFabric.ITEM_GROUP)));
 
 		//	BLOCKS
-		Registry.register(Registry.BLOCK, new Identifier("firstfabric", "backrooms_wall"), BACKROOMS_WALL);
 		Registry.register(Registry.BLOCK, new Identifier("firstfabric", "teleporter"), TELEPORTER);
+		Registry.register(Registry.BLOCK, new Identifier("firstfabric", "backrooms_wall"), BACKROOMS_WALL);
+		Registry.register(Registry.BLOCK, new Identifier("firstfabric", "backrooms_carpet"), BACKROOMS_CARPET);
+		Registry.register(Registry.BLOCK, new Identifier("firstfabric", "backrooms_light"), BACKROOMS_LIGHT);
+		Registry.register(Registry.BLOCK, new Identifier("firstfabric", "backrooms_ceiling"), BACKROOMS_CEILING);
+
+
+		// HOSTILE ENTITIES
+		FabricDefaultAttributeRegistry.register(HOUND, Hound.createMobAttributes());
 
 		ModDimensions.register();
 
@@ -114,8 +150,25 @@ public class FirstFabric implements ModInitializer {
 	//	BLOCKS
 
 	static class Backrooms_wall extends Block{
-
 		public Backrooms_wall(Settings settings) {
+			super(settings);
+		}
+	}
+
+	static class Backrooms_carpet extends Block{
+		public Backrooms_carpet(Settings settings){
+			super(settings);
+		}
+	}
+
+	static class Backrooms_light extends Block{
+		public Backrooms_light(Settings settings){
+			super(settings);
+		}
+	}
+
+	static class Backrooms_ceiling extends Block{
+		public Backrooms_ceiling(Settings settings){
 			super(settings);
 		}
 	}
